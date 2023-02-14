@@ -1,4 +1,7 @@
 
+set autocommit = 0;
+
+
 
 -- Inserts de todas las tablas
 
@@ -56,6 +59,8 @@ insert INTO proveedores	VALUES
 (6298, 					'INDUSTRIA REAL S.A NIRSA',					'305028743');
 
 
+savepoint save_1;
+-- COMMIT;
 
 
 insert INTO MERCADERIA VALUES
@@ -140,6 +145,8 @@ insert INTO MERCADERIA VALUES
 (84911	,		'LAYS CLASICAS 249GR',							7372	,	773	,	'SECO');
 
 
+savepoint save_2;
+-- COMMIT;
 
 
 insert INTO preparador VALUES
@@ -209,6 +216,8 @@ insert INTO preparador VALUES
 (12857	,	'JULIO',		'ROMERO');
 
 
+savepoint save_3;
+-- COMMIT;
 
 
 insert INTO tienda VALUES
@@ -235,7 +244,8 @@ insert INTO tienda VALUES
 (5439,   	'Palermo'		);
 
 
-
+savepoint save_4;
+-- COMMIT;
 
 
 insert INTO camiones VALUES
@@ -289,6 +299,8 @@ insert INTO camiones VALUES
 (291,	'3555 KRE'	,	'Volvo FH 420',						2018	);
 
 
+savepoint save_4;
+-- COMMIT;
 
 
 insert INTO choferes VALUES
@@ -341,6 +353,9 @@ insert INTO choferes VALUES
 (43173934,	"Gonzalo"	,	"Caballero"		),
 (38888949,	"Atilio"	,	"Padilla Gracia");
 
+
+savepoint save_5;
+-- COMMIT;
 
 
 insert INTO pedidos VALUES
@@ -395,6 +410,8 @@ insert INTO pedidos VALUES
 (	6778837	,	5439,	28167329	,	905	);
 
 
+savepoint save_5;
+-- COMMIT;
 
 
 insert INTO pickeos VALUES
@@ -625,6 +642,11 @@ insert INTO pickeos VALUES
 (null,	34433	,	6778837	,	1	,	9054	),
 (null,	40782	,	6778837	,	1	,	9054	);
 
+savepoint save_6;
+-- COMMIT;
+
+
+COMMIT;
 
 
 -- Todos los selects de las tablas creadas
