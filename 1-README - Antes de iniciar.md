@@ -12,14 +12,16 @@ Dentro del archivo SQL 'BackUp - Proyuecto Final' el back up para la insercion t
 
 Listado de Archivos en orden:
 
-1) Entrega Proyecto Final - Owen Ramirez.pptx: Presentación del Proyecto Final
+1) README - Antes de iniciar: Donde nos encontramos
 
-2) ERD.md: Diagrama Entidad Relacion creado a traves del Reverse Engineer del MySql
+2) Presentación Proyecto Final: Presentación del Proyecto Final
 
-3) UsersForSchema: Usuarios creados para el proyecto
+3) ERD.md: Diagrama Entidad Relacion creado a traves del Reverse Engineer del MySql
 
-4) Script Tables Owen.sql: Script de la creacion de las tablas
+4) UsersForSchema: Usuarios creados para el proyecto
 
-5) InsertsTable: Insercion de los datos en las tablas
+5) Script Tables Owen.sql: Script de la creacion de las tablas
 
-6) CodeSQL: En el se encuentran las querys de las SP, Fx y Triggers
+6) InsertsTable: Insercion de los datos en las tablas
+
+7) CodeSQL: En el se encuentran las querys de las SP, Fx y Triggers
