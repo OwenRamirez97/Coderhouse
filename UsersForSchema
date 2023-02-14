@@ -1,0 +1,19 @@
+          -- Usuario Sistemas, asignado al sector de Sistemas para realizar cualquier corrección necesaria
+
+create user 'Sistemas' identified by 'SistemasDia%'; 
+
+
+
+        -- El Usuario 'Sistemas' todos los permisos necesarios para revisar, modificar o borrar registros y tablas.
+
+GRANT select, insert, update ON centro_logistico.* TO 'Sistemas';
+
+
+
+        -- Usuario Gerente, asignado al gerente del Centro Logistico.
+
+create user 'Gerente.' identified by 'GerenteCD503';
+
+       -- El Usuario 'Gerente' poseerá solo permisos de lectura de los registros de todas las tablas
+
+GRANT select ON centro_logistico.* TO 'Gerente'
