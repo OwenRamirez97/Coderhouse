@@ -1,0 +1,415 @@
+
+
+                                          -- Views
+
+
+
+/*
+View donde veremos a la ubicacion que irá cada interno junto con su nombre y apellido.
+Dicha view ayudará a llevar un control minusioso del destino al que irá cada interno, asi se podrá medir su tioempo de viaje entre ida y vuelta, 
+para corroborar que el mismo no este sobrepasandose del tiempo del viaje promedio hacia la tienda
+*/
+CREATE VIEW destino_interno AS
+select
+			p.cod_pedido as pedido,
+			p.cod_tienda as tienda,
+			TI.ubicacion as ubicacion,
+			ch.DNI_chofer as DNI,
+			ch.nombre_chofer as nombre ,
+			ch.apellido_chofer as apellido
+from choferes as CH
+	JOIN tienda as TI
+    JOIN pedidos as p
+	on p.Cod_Tienda = TI.Cod_Tienda
+	and CH.DNI_chofer = p.DNI_Chofer;
+
+
+SELECT * FROM destino_interno;
+
+
+  /*
+  View de que pedidos individuales van a preparar cada preparado, junto con su legajo, nombre y apellido, asi como tambien la tienda a la que pertenece cada pedido.
+  La view como tal será de utilidad para realizar un control de los operarios que realizan cada pedido, asi, en caso de reclamo de faltantes o sobrantes, tendremos de manera agil y rapida el responsable del mencionado error.
+	*/
+
+CREATE VIEW tienda_x_preparador AS
+select distinct
+			PREP.nombre_preparador as Nombre,
+			PREP.apellido_preparador as Apellido,
+            p.Cod_tienda as Tienda,
+			pi.pedido as Pedido,
+			pi.Preparador as Preparador
+            
+	from preparador as PREP
+    join pickeos as pi
+		on PREP.leg_preparador = pi.preparador
+	join pedidos as p
+		on P.Cod_Pedido = pi.Pedido;
+        
+        
+	SELECT * FROM tienda_x_preparador;
+
+
+
+
+/* 
+View simple, donde se verán cada artículo junto al nombre de su proveedor.
+El mismo será de utilidad para la recepcion de dichos artículos, ya que ante la necesidad de cierto artículo en especifico por falta de stock 
+se podra visualizar rapidamente el nombre del proveedor al que pertenece sin la necesidad de buscar su nombre a traves del cod, lo que agilizará el proceso de recepción
+
+*/
+create view Proveedores_de_Art AS
+select
+	m.Cod_Articulo 					as Articulo, 
+	m.descripcion 					as Descripcion,
+	m.Proveedor						as Cod_Proveedor,
+    prov.Nombre_proveedores			as Nombre_Proveedor
+    		from mercaderia as m
+			join proveedores as prov
+	on m.proveedor = prov.Cod_proveedores;
+
+
+SELECT * FROM Proveedores_de_Art;
+
+
+
+/*
+ View de tiendas y que llevaran el Art 14837 - Coca Cola, junto con sus cantidades, el objetivo del mismo será llevar un control minucioso del mencionado artículo,
+ ya que el mismo, es uno de lo que mayor rotación tiene dentro del CD, por lo tanto el que mayor pérdida genera
+ 
+*/
+
+
+CREATE VIEW Destino_CocaCola AS
+select 
+	PI.Pedido				as Pedido,
+	PI.Articulo_pickeado	As Coca_Cola,
+    PI.Cantidad				AS Cantidad,
+	PE.Cod_Tienda			as Tienda
+from pickeos as PI
+inner join pedidos as PE
+	on PE.Cod_Pedido = PI.Pedido
+	where PI.Articulo_pickeado = 14837;
+
+
+SELECT * FROM Destino_CocaCola;
+
+
+
+
+
+                                                    -- Stored Procedures
+                                            
+                                            
+-- PROCEDURE DE ENTRADA DE DATOS
+	/*
+	SP de insercion de datos a la tabla mercadería, se realizó para la tabla de mercaderia.
+    La misma será de utilidad para la recepción de mercadería por parte de los proveedores, a la cual llamando al SP, ingresaremos la misma al sistema, incluso con la cantidad con la que ingresa al CD
+    */
+    
+DELIMITER $$
+
+CREATE PROCEDURE sp_insert_mercaderia (IN Cod_articulo_param INT, descripcion_param CHAR(60), Proveedor_param INT, Stock_param INT, Sector_param CHAR(20))
+BEGIN
+	INSERT INTO mercaderia (Cod_articulo, descripcion, Proveedor, Stock, Sector)
+			VALUES (Cod_articulo_param, descripcion_param, Proveedor_param, Stock_param, Sector_param);
+            
+	SELECT * FROM mercaderia;
+END $$
+
+DELIMITER ;
+
+
+-- llamado a la SP para insertar un dato nuevo
+
+CALL sp_insert_mercaderia (710, 'LECHE ENT LA LACTEO 1 LT', 5126, 90, "SECO");
+
+
+
+/*
+ SP el cual informa de los 10 artículos que se encuentran con menos Stock dentro del CD.
+Esta SP nos será de utilidad para llevar un control constante y diario de los artículos con menos stock en el CD, los cuales deberán de ser repuestos de manera urgente, 
+como tal, será utilizado por el sector de recepcion diariamente para llevar a cabo dicho control
+*/
+
+
+DELIMITER $$
+CREATE PROCEDURE sp_get_10_less_stock ()
+BEGIN
+	SELECT
+	 *
+	FROM mercaderia
+	ORDER BY stock ASC LIMIT 10;
+
+END$$
+ delimiter ;
+
+CALL sp_get_10_less_stock ();
+
+
+
+
+
+                                                      -- Funciones
+                                                      
+                                                      
+/*
+
+FUNCION, la cual nos permitirá ver el total de bultos que se encuentran saliendo a tienda, lo que permitirá un mejor control de la producción realizada, 
+que servirá tambien para llevaar un control de los pagos de premios y producción.
+
+*/
+  
+DELIMITER $$
+
+	CREATE FUNCTION total_bultos_pedidos ()
+	RETURNS int
+	DETERMINISTIC
+	BEGIN
+    
+    DECLARE resultado INT;
+    
+    SELECT sum(cantidad)
+    
+    INTO resultado
+    
+    from pickeos; 
+    
+    return resultado;
+    
+    END $$
+    
+    DELIMITER ;
+    
+    
+-- Select que mostrará el total.
+    
+   select total_bultos_pedidos ();
+
+
+
+    
+
+/*
+Funcion que nos permitirá visualizar cual es el Art que se encuentra siendo mas pickeado,
+ el conocimiento de esto ayudará a reposicionar los pallets de dicho artículo para que se encuentran mas cerca de los sectores donde se deja la mercadería luego de finalizada la preparación,
+ lo cual agiliza los tiempos de la misma.
+
+*/
+
+
+DELIMITER $$
+
+  CREATE FUNCTION fx_art_mas_pedido ()
+  RETURNS INT
+  DETERMINISTIC
+
+  BEGIN
+    DECLARE cod_articulo_result INT;
+	DECLARE total_art_mas_pedido INT;
+
+		SELECT PI.Articulo_pickeado,
+        COUNT(PI.cantidad) AS Total_art
+      
+      INTO 	cod_articulo_result, 
+			total_art_mas_pedido
+
+	FROM pickeos AS PI
+
+			GROUP BY PI.Articulo_pickeado
+			ORDER BY Total_art DESC
+
+	LIMIT 1;
+
+    RETURN cod_articulo_result;
+
+  END $$ 
+  
+  DELIMITER ;
+  
+    -- Error Code: 1064. You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '' at line 8
+
+    
+  -- select de la funcion
+  
+			select fx_art_mas_pedido ();
+
+
+
+
+
+                                              -- Triggers
+                                              
+                                              
+									
+                                    -- TABLA PROVEEDORES ELEGIDA PARA LOS 2 PRIMEROS TRIGGERS
+
+			-- TRIGGER AFTER que muestra el usuario, fecha y hora de quien realiza la insercion de datos sobre la tabla pickeos
+			-- Tabla en la  que se mostrara el usuario.
+
+CREATE TABLE pickeos_log (
+        ID_Pickeo 					INT NOT NULL PRIMARY KEY auto_increment,
+        Articulo_pickeado 			INT,
+        Pedido						INT,
+        Cantidad					INT,
+        Preparador					INT,
+		usuario_alta 				VARCHAR(50),
+        fecha 						date,
+        hora 						time
+        );
+        
+        
+        
+	-- TRIGGER que realizara lo buscado
+            
+DELIMITER $$
+    CREATE TRIGGER tr_insertar_pickeos
+    AFTER INSERT ON pickeos
+    FOR EACH ROW
+    BEGIN
+        INSERT INTO pickeos_log (
+        
+        ID_Pickeo 					,
+        Articulo_pickeado 			,
+        Pedido						,
+        Cantidad					,
+        Preparador					,
+		usuario_alta 				,
+        fecha 						,
+        hora 						
+	) VALUES (
+        NEW.ID_Pickeo 					,
+        NEW.Articulo_pickeado 			,
+        NEW.Pedido						,
+        NEW.Cantidad					,
+        NEW.Preparador					,
+		user()		 				,
+        current_date()				,
+        current_time()		
+        );
+    END $$
+DELIMITER ;
+
+
+-- Insert y Tabl
+insert pickeos values (NULL, 14837, 6778868, 60, 8887);
+select * from pickeos_log;
+
+
+
+
+
+
+
+/* 
+
+TRIGGER BEFORE que muestra el usuario de quien realiza una actualización de datos de la tabla proveedores, la tabla creada mostrará tanto los registros anteriores, como posteriores a la actualización.
+asi como tambien el usuario, fecha y hora de quien los realiza.
+Esto servirá en caso de necesitar el nombre anterior de un proveedor luego del cambio de firma.
+ 
+*/
+CREATE TABLE proveedores_update (
+		Cod_proveedores_viejo		INT,
+        nombre_proveedores_viejo 	VARCHAR(50),
+        Cuil_Proveedor_viejo		int,
+        Cod_proveedores_nuevo		INT,
+        nombre_proveedores_nuevo 	VARCHAR(50),
+        Cuil_Proveedor_nuevo		int,
+		usuario_alta 				VARCHAR(50),
+        fecha						date,
+        hora 						time
+        );
+        
+			-- TRIGGER realizado que utiliza la secuencia NEW y OLD para mostrar ambos registros de la actualizacion        
+
+DELIMITER $$
+    CREATE TRIGGER tr_update_proveedores_before
+    BEFORE UPDATE ON proveedores
+    FOR EACH ROW
+    BEGIN
+        INSERT into proveedores_update (
+			  Cod_proveedores_viejo
+			, nombre_proveedores_viejo
+            , Cuil_Proveedor_viejo
+            , Cod_proveedores_nuevo
+            , nombre_proveedores_nuevo
+            , Cuil_Proveedor_nuevo
+            , usuario_alta
+            , fecha
+			, hora 
+        ) VALUES (
+					OLD.Cod_proveedores
+				,	OLD.nombre_proveedores
+                ,	OLD.Cuil_Proveedor
+                ,	NEW.Cod_proveedores
+				,	NEW.nombre_proveedores
+				,	NEW.Cuil_Proveedor
+				,	USER()
+				,	CURRENT_DATE()
+				,	CURRENT_TIME()
+        );
+    END $$
+DELIMITER ;
+
+
+-- UPDATE y SELECT que mostrarán al trigger en funcionamiento.
+
+update proveedores 
+SET Nombre_proveedores = 'MOLINOS DEL ALAMO S.A' 
+where Cod_proveedores = 5067;
+
+select * from proveedores_update;
+
+
+
+
+                        
+	-- TRIGGER AFTER que muestrará al usuario, fecha y hora de quien realiza la insercion de nuevas tiendas a la tabla Tienda.
+    
+
+CREATE TABLE tienda_log (
+        Cod_Tienda 		INT NOT NULL,
+        Ubicacion		VARCHAR(50),
+		usuario 		VARCHAR(30),
+        fecha 			date,
+        hora 			time
+        );
+        
+        
+DELIMITER $$
+    CREATE TRIGGER tr_insertar_tienda
+    AFTER INSERT ON tienda
+    FOR EACH ROW
+    BEGIN
+        INSERT INTO tienda_log (
+              Cod_Tienda
+            , Ubicacion
+            , usuario
+            , fecha
+			, hora 
+        ) VALUES (
+				NEW.Cod_Tienda,
+				NEW.Ubicacion,
+				USER(),
+				CURRENT_DATE(),
+				CURRENT_TIME()
+        );
+    END $$
+DELIMITER ;
+    
+		-- insercion de datos y SELECT que confirma que fue llevada a la tabla LOG creada
+    
+INSERT into tienda 
+    values (90016, 'Monte Chingolo');
+    
+SELECT * FROM tienda_log;
+
+
+
+
+
+
+
+
+
+
