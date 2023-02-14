@@ -3,15 +3,15 @@
 -- Inserts de todas las tablas
 
 insert INTO proveedores	VALUES
-(11517, 				'THE NOT COMPANY',	   						'307161648'),
-(5106, 					'CUMBRE SAN LUIS S.A',						'336233306'),
-(11645,					'NEOSOL SACI',								'305021944'),
-(9277,					'MCCAIN ARGENTINA S.A',						'306796459'),
-(9957, 					'REJO SA',									'307096984'),
+(11517, 				'THE NOT COMPANY',	   				  		'307161648'),
+(5106, 					'CUMBRE SAN LUIS S.A',					   	'336233306'),
+(11645,					'NEOSOL SACI',								      '305021944'),
+(9277,					'MCCAIN ARGENTINA S.A',						  '306796459'),
+(9957, 					'REJO SA',								        	'307096984'),
 (11593,					'LOPREITE RODOLFO HUGO',    				'201488396'),
-(9502,					'LA AGRICOLA SA',							'305178749'),
-(9304,					'BODEGA NORTON S.A',             			'305016578'),
-(9410,					'BODEGAS ESMERALDA S.A',					'305025844'),
+(9502,					'LA AGRICOLA SA',						      	'305178749'),
+(9304,					'BODEGA NORTON S.A',            		'305016578'),
+(9410,					'BODEGAS ESMERALDA S.A',				  	'305025844'),
 (6679,					'COMPAÑIA IND. CERVECERA S.A',				'305057798'),
 (10829,					'COMPAÑIA BERNAL S.A',						'307119528'),
 (5043,     				'HERMANOS BERTOLINI S.R.L',            	    '336319889'),
