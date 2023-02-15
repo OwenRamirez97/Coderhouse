@@ -12,18 +12,18 @@ Dentro del archivo SQL 'BackUp - Proyuecto Final' el back up para la insercion t
 
 Listado de Archivos en orden:
 
-1) README - Antes de iniciar: Donde nos encontramos
+1) README - Antes de iniciar:       Donde nos encontramos
 
-2) Presentación Proyecto Final: Presentación del Proyecto Final
+2) Presentación Proyecto Final:     Presentación del Proyecto Final
 
-3) ERD.md: Diagrama Entidad Relacion creado a traves del Reverse Engineer del MySql
+3) ERD.md:                          Diagrama Entidad Relacion creado a traves del Reverse Engineer del MySql
 
-4) UsersForSchema: Usuarios creados para el proyecto
+4) UsersForSchema:                  Usuarios creados para el proyecto
 
-5) Script Tables Owen.sql: Script de la creacion de las tablas
+5) Script Tables Owen.sql:          Script de la creacion de las tablas
 
-6) InsertsTable: Insercion de los datos en las tablas
+6) InsertsTable:                    Insercion de los datos en las tablas
 
-7) CodeSQL: En el se encuentran las querys de las SP, Fx y Triggers
+7) CodeSQL:                         Querys de las Stored Procedures, Functions y Triggers
 
-8) Back UP Schema.sql: Back UP completo de todo lo realizado
+8) Back UP Schema.sql:              Back UP completo de todo el proyecto para su inserción rapida en su propio MySql
