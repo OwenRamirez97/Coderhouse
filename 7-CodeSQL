@@ -240,20 +240,24 @@ DELIMITER $$
 
                                               -- Triggers
                                               
-                                              
-									
-                                    -- TABLA PROVEEDORES ELEGIDA PARA LOS 2 PRIMEROS TRIGGERS
+                                             
+					     
 
-			-- TRIGGER AFTER que muestra el usuario, fecha y hora de quien realiza la insercion de datos sobre la tabla pickeos
-			-- Tabla en la  que se mostrara el usuario.
+	/*
+	El trigger After utilizado, hará que que se observé el usuario fecha y hora de quien realiza una inserción de datos a la tabla Pickeos,
+	ayudará a llevar el control de quien modifica la tabla.
+	*/
+	
+	
+	-- Tabla pickeos_log, en la que se mostrará el usuario.
 
 CREATE TABLE pickeos_log (
         ID_Pickeo 					INT NOT NULL PRIMARY KEY auto_increment,
-        Articulo_pickeado 			INT,
+        Articulo_pickeado 				INT,
         Pedido						INT,
         Cantidad					INT,
         Preparador					INT,
-		usuario_alta 				VARCHAR(50),
+	usuario_alta 					VARCHAR(50),
         fecha 						date,
         hora 						time
         );
@@ -291,7 +295,7 @@ DELIMITER $$
 DELIMITER ;
 
 
--- Insert y Tabl
+-- Insert y select
 insert pickeos values (NULL, 14837, 6778868, 60, 8887);
 select * from pickeos_log;
 
@@ -364,7 +368,7 @@ select * from proveedores_update;
 
 
                         
-	-- TRIGGER AFTER que muestrará al usuario, fecha y hora de quien realiza la insercion de nuevas tiendas a la tabla Tienda.
+	-- TRIGGER AFTER que mostrará al usuario, fecha y hora de quien realiza la insercion de nuevas tiendas a la tabla Tienda.
     
 
 CREATE TABLE tienda_log (
@@ -403,13 +407,4 @@ INSERT into tienda
     values (90016, 'Monte Chingolo');
     
 SELECT * FROM tienda_log;
-
-
-
-
-
-
-
-
-
 
