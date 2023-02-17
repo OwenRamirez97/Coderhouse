@@ -1,6 +1,8 @@
 -- Schema del proyecto final
 
 		Create schema centro_logistico;
+		
+		USE schema centro_logistico;
         
         
 		-- Tablas
@@ -13,7 +15,7 @@ proceso de ingreso de la mercadería dentro del centro logistico
 
 Create table Proveedores (
 	Cod_proveedores			INT 			NOT NULL PRIMARY KEY,
-	Nombre_proveedores 		VARCHAR(30) 		NOT NULL,
+	Nombre_proveedores 		VARCHAR(60) 		NOT NULL,
 	Cuil_Proveedor		 	INT			NOT NULL
 );
 
@@ -90,7 +92,7 @@ create table Choferes (
 	
    	 DNI_chofer		INT		NOT NULL PRIMARY KEY,
 	Nombre_chofer		VARCHAR(30) 	NOT NULL,
-	Apellido_chofer		VARCHAR(60) 	NOT NULL
+	Apellido_chofer		VARCHAR(30) 	NOT NULL
 );
     
   
